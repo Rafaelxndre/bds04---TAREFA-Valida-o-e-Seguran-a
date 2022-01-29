@@ -24,6 +24,7 @@ public class User implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	//Nao deixa o email se repetir
 	@Column(unique=true)
 	private String email;
 	private String password;
