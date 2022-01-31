@@ -1,8 +1,10 @@
 package com.devsuperior.bds04.entities;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,9 +17,13 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 @Entity
 @Table(name = "tb_user")
-public class User implements Serializable{
+public class User implements UserDetails, Serializable{
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -97,6 +103,43 @@ public class User implements Serializable{
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
-	}	
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return roles.stream().map(role -> new SimpleGrantedAuthority(role.getAuthority()))
+				.collect(Collectors.toList());
+	}
+
+	//Qual atributo da minha classe que representa o Username?
+	@Override
+	public String getUsername() {
+		return email;
+	}
+
+	//A conta nao esta expirada?Sim ela nao esta expirada
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	//A conta nao esta bloqueada?Sim ela nao esta bloquead
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	
+	//As credencias nao estao expiradas?Sim elas nao estao expirada
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	//O usuario esta habilitado?Sim o usuario esta habilitado
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
 	
 }
